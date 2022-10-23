@@ -8,14 +8,14 @@ import { logout } from "../shared/utils/auth";
 import { connect } from "react-redux";
 import { getAction } from "../store/actions/authActions";
 import { connectWithSocketServer } from "../realtimeCommunication/socketConnection";
-
+import Room from "./Room/Room";
 const Wrapper = styled("div")({
   width: "100%",
   height: "100vh",
   display: "flex",
 });
 
-const Dashboard = ({ SetUserDetails }) => {
+const Dashboard = ({ SetUserDetails, isUserInRoom }) => {
   useEffect(() => {
     const userDetails = localStorage.getItem("user");
     if (!userDetails) {
@@ -30,14 +30,20 @@ const Dashboard = ({ SetUserDetails }) => {
       <SideBar />
       <FriendSideBar />
       <AppBar />
+      {isUserInRoom && <Room />}
       <Messenger />
     </Wrapper>
   );
 };
 
+const mapStoreStateToProps = ({ room }) => {
+  return {
+    ...room,
+  };
+};
 const mapActionsToProps = (dispatch) => {
   return {
     ...getAction(dispatch),
   };
 };
-export default connect(null, mapActionsToProps)(Dashboard);
+export default connect(mapStoreStateToProps, mapActionsToProps)(Dashboard);
